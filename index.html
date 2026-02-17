@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Reverse Breakout — Survive the Balls</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="ui">
+    <div class="left">
+      <div id="timer">Time: 0.0s</div>
+      <div id="high">Best: 0.0s</div>
+    </div>
+    <div class="center">
+      <button id="startBtn">Start</button>
+      <button id="muteBtn">Mute</button>
+    </div>
+    <div class="right">
+      <div id="hp">HP: 100</div>
+      <div id="power">Power: —</div>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas"></canvas>
+  
+  <!-- Hidden shop UI -->
+  
+
+  <!-- Audio placeholders -->
+  <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
+  <audio id="hitSfx" src="hit.mp3" preload="auto"></audio>
+  <audio id="powerSfx" src="powerup.mp3" preload="auto"></audio>
+  <audio id="warnSfx" src="warn.mp3" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
