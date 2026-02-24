@@ -79,7 +79,7 @@
   let balls = [];
 
   // Powerups: include autoDodge here
-  const powerTypes = [/*'shield','health','slow','teleport','heal','speed',*/'autoDodge'];
+  const powerTypes = ['shield','health','slow','teleport','heal','speed','autoDodge'];
   let powerups = [];
 
   // Particles & screen shake
@@ -565,4 +565,5 @@
   });
 
 })();
+
 
