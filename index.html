@@ -7,16 +7,16 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="ui">
-    <div class="left">
+  <div id="ui">
+    <div class="top-left">
       <div id="timer">Time: 0.0s</div>
       <div id="high">Best: 0.0s</div>
     </div>
-    <div class="center">
+    <div class="top-right">
       <button id="startBtn">Start</button>
       <button id="muteBtn">Mute</button>
     </div>
-    <div class="right">
+    <div class="bottom-left">
       <div id="hp">HP: 100</div>
       <div id="power">Power: —</div>
     </div>
@@ -24,9 +24,6 @@
 
   <canvas id="gameCanvas"></canvas>
   
-  <!-- Hidden shop UI -->
-  
-
   <!-- Audio placeholders -->
   <audio id="bgm" src="bgm.mp3" preload="auto" loop></audio>
   <audio id="hitSfx" src="hit.mp3" preload="auto"></audio>
