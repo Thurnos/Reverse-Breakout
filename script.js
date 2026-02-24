@@ -15,13 +15,12 @@
   const hpEl     = document.getElementById('hp');
   const powerEl  = document.getElementById('power');
 
-  // Audio elements (optional files in project folder)
+  // Audio elements
   const audio = {
     bgm: document.getElementById('bgm'),
     hit: document.getElementById('hitSfx'),
     power: document.getElementById('powerSfx'),
     warn: document.getElementById('warnSfx'),
-    // you can add shockwave or other sfx elements and reference them via `audio.xxx`
   };
   let muted = false;
   function play(name, vol = 1) {
@@ -32,7 +31,7 @@
       a.volume = Math.min(Math.max(vol, 0), 1);
       a.currentTime = 0;
       a.play();
-    } catch (e) { /* ignore audio errors (autoplay policy etc.) */ }
+    } catch (e) { }
   }
 
   // Canvas / state
@@ -566,3 +565,4 @@
   });
 
 })();
+
