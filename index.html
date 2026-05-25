@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reverse Breakout — Rogue Lite</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Arcade survival roguelite</p>
+        <h1>Reverse Breakout</h1>
+        <p class="subtitle">Dodge the balls, survive level waves, earn gold, and upgrade your brick after every run.</p>
+      </div>
+
+      <div class="controls">
+        <button id="startBtn" class="primary">Start Run</button>
+        <button id="muteBtn">Mute</button>
+        <button id="resetMetaBtn" class="danger">Reset Progress</button>
+      </div>
+    </section>
+
+    <section class="game-shell">
+      <div class="top-bar">
+        <span id="timer">Time: 0.0s</span>
+        <span id="level">Level: 1</span>
+        <span id="hp">HP: 100</span>
+        <span id="gold">Gold: 0</span>
+        <span id="high">Best: 0.0s</span>
+      </div>
+
+      <canvas id="gameCanvas" width="1280" height="720" aria-label="Reverse Breakout game canvas"></canvas>
+
+      <div class="bottom-bar">
+        <span id="power">Power: —</span>
+        <span>Move: WASD / Arrows / Mouse-follow click</span>
+        <span>Level 3 weapon: Space / E</span>
+      </div>
+    </section>
+
+    <section class="tips">
+      <article>
+        <h3>Level breaks</h3>
+        <p>Every new level clears the old balls and gives you a short breathing window.</p>
+      </article>
+      <article>
+        <h3>Rogue-lite progress</h3>
+        <p>Gold is earned from survival time and spent after death on permanent upgrades.</p>
+      </article>
+      <article>
+        <h3>Powerups</h3>
+        <p>Collect heal, shield, reflect shield, slow time, shrink, and auto-dodge pickups.</p>
+      </article>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
