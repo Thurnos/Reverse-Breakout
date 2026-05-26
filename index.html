@@ -31,27 +31,22 @@
         <span id="high">Best: 0.0s</span>
       </div>
 
-      <canvas id="gameCanvas" width="1280" height="720" aria-label="Reverse Breakout game canvas"></canvas>
+      <div class="canvas-wrap">
+        <canvas id="gameCanvas" width="1280" height="720" aria-label="Reverse Breakout game canvas"></canvas>
+
+        <div id="mobileTouchLayer" aria-hidden="true">
+          <div id="mobileJoystick" class="mobile-joystick">
+            <div id="mobileJoystickKnob" class="mobile-joystick-knob"></div>
+          </div>
+
+          <button id="mobileAttackButton" class="mobile-attack-button" type="button">ATK</button>
+        </div>
+      </div>
 
       <div class="bottom-bar">
         <span id="power">Power: —</span>
         <span>Move: WASD / Arrows / Mouse-follow click</span>
         <span>Level 3 weapon: Space / E</span>
-      </div>
-    </section>
-
-    <section id="mobileControls" aria-label="Mobile controls">
-      <div class="mobile-pad">
-        <button class="mobileBtn mobile-up" data-mobile-control="up" aria-label="Move up">▲</button>
-        <div class="mobile-row">
-          <button class="mobileBtn" data-mobile-control="left" aria-label="Move left">◀</button>
-          <button class="mobileBtn" data-mobile-control="down" aria-label="Move down">▼</button>
-          <button class="mobileBtn" data-mobile-control="right" aria-label="Move right">▶</button>
-        </div>
-      </div>
-
-      <div class="mobile-actions">
-        <button class="mobileBtn mobileAttack" id="mobileAttackBtn" aria-label="Use stick weapon">ATTACK</button>
       </div>
     </section>
 

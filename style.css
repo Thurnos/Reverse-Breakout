@@ -185,11 +185,17 @@ button.danger {
 }
 
 
-/* Mobile controls are hidden on desktop so PC gameplay stays unchanged. */
-#mobileControls {
+/* Canvas wrapper allows the mobile joystick to sit on top of the game window. */
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+}
+
+#mobileTouchLayer {
   display: none;
 }
 
+/* Mobile-only transparent in-game joystick + attack button. */
 @media (max-width: 900px), (pointer: coarse) {
   html,
   body {
@@ -203,7 +209,7 @@ button.danger {
 
   .app {
     width: 100%;
-    padding: 10px 0 18px;
+    padding: 8px 0 16px;
   }
 
   .hero {
@@ -237,7 +243,7 @@ button.danger {
 
   .top-bar,
   .bottom-bar {
-    padding: 8px 8px;
+    padding: 7px 8px;
     gap: 6px;
     font-size: 11px;
     justify-content: center;
@@ -251,62 +257,82 @@ button.danger {
   #gameCanvas {
     width: 100vw;
     height: auto;
-    max-height: 56vh;
+    max-height: 62vh;
     touch-action: none;
   }
 
-  #mobileControls {
-    display: flex;
-    justify-content: space-between;
-    align-items: end;
-    gap: 16px;
-    padding: 12px 16px 8px;
-    user-select: none;
+  #mobileTouchLayer {
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 12;
     touch-action: none;
   }
 
-  .mobile-pad {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .mobile-row {
-    display: flex;
-    gap: 8px;
-  }
-
-  .mobileBtn {
-    width: 66px;
-    height: 66px;
-    padding: 0;
-    border-radius: 18px;
-    border: 2px solid rgba(255,255,255,0.18);
-    background: rgba(15, 23, 42, 0.9);
-    color: #fff;
-    font-size: 26px;
-    font-weight: 900;
-    line-height: 1;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.28);
-    -webkit-tap-highlight-color: transparent;
-    touch-action: none;
-  }
-
-  .mobileBtn:active,
-  .mobileBtn.isPressed {
-    transform: scale(0.94);
-    background: rgba(34, 211, 238, 0.25);
-    border-color: rgba(34, 211, 238, 0.7);
-  }
-
-  .mobileAttack {
-    width: 112px;
-    height: 112px;
+  .mobile-joystick {
+    position: absolute;
+    left: 22px;
+    bottom: 24px;
+    width: 132px;
+    height: 132px;
     border-radius: 999px;
-    font-size: 17px;
-    background: rgba(239, 68, 68, 0.26);
-    border-color: rgba(248, 113, 113, 0.5);
+    background: rgba(15, 23, 42, 0.18);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    box-shadow: inset 0 0 28px rgba(255,255,255,0.06), 0 10px 30px rgba(0,0,0,0.16);
+    backdrop-filter: blur(4px);
+    pointer-events: auto;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-joystick::before {
+    content: "";
+    position: absolute;
+    inset: 33px;
+    border-radius: 999px;
+    border: 1px dashed rgba(255,255,255,0.20);
+  }
+
+  .mobile-joystick-knob {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 54px;
+    height: 54px;
+    border-radius: 999px;
+    transform: translate(-50%, -50%);
+    background: rgba(34, 211, 238, 0.32);
+    border: 2px solid rgba(255,255,255,0.42);
+    box-shadow: 0 0 22px rgba(34,211,238,0.25);
+    pointer-events: none;
+  }
+
+  .mobile-attack-button {
+    position: absolute;
+    right: 26px;
+    bottom: 34px;
+    width: 104px;
+    height: 104px;
+    border-radius: 999px;
+    padding: 0;
+    background: rgba(239, 68, 68, 0.20);
+    border: 2px solid rgba(248, 113, 113, 0.42);
+    color: rgba(255,255,255,0.88);
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18), inset 0 0 24px rgba(255,255,255,0.05);
+    pointer-events: auto;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-attack-button:active,
+  .mobile-attack-button.isPressed {
+    transform: scale(0.94);
+    background: rgba(239, 68, 68, 0.36);
+    border-color: rgba(248, 113, 113, 0.72);
   }
 
   .tips {
@@ -316,19 +342,27 @@ button.danger {
 }
 
 @media (max-width: 420px) {
-  .mobileBtn {
-    width: 58px;
-    height: 58px;
-    font-size: 23px;
-  }
-
-  .mobileAttack {
-    width: 96px;
-    height: 96px;
-    font-size: 15px;
-  }
-
   #gameCanvas {
-    max-height: 52vh;
+    max-height: 56vh;
+  }
+
+  .mobile-joystick {
+    left: 16px;
+    bottom: 18px;
+    width: 112px;
+    height: 112px;
+  }
+
+  .mobile-joystick-knob {
+    width: 46px;
+    height: 46px;
+  }
+
+  .mobile-attack-button {
+    right: 18px;
+    bottom: 26px;
+    width: 88px;
+    height: 88px;
+    font-size: 15px;
   }
 }

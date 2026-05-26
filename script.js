@@ -25,15 +25,15 @@
   const choice = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
   function mobileSpeedFactor() {
-    return isTouchDevice ? 0.86 : 1;
+    return isTouchDevice ? 0.88 : 1;
   }
 
   function mobileSpawnFactor() {
-    return isTouchDevice ? 1.16 : 1;
+    return isTouchDevice ? 1.14 : 1;
   }
 
   function mobilePlayerSpeedBonus() {
-    return isTouchDevice ? 0.7 : 0;
+    return isTouchDevice ? 0.65 : 0;
   }
 
   let muted = false;
@@ -127,54 +127,100 @@
     upgrades = {};
     lastRunGold = 0;
   
-  function bindMobileControlButtons() {
-    const buttons = document.querySelectorAll('[data-mobile-control]');
+  function bindMobileJoystick() {
+    const joystick = document.getElementById('mobileJoystick');
+    const knob = document.getElementById('mobileJoystickKnob');
+    const attackButton = document.getElementById('mobileAttackButton');
 
-    buttons.forEach((btn) => {
-      const control = btn.dataset.mobileControl;
-      if (!control || !(control in mobileControlsState)) return;
+    if (!isTouchDevice) return;
 
-      const press = (event) => {
+    const resetJoystick = () => {
+      mobileJoystickState.active = false;
+      mobileJoystickState.pointerId = null;
+      mobileJoystickState.x = 0;
+      mobileJoystickState.y = 0;
+      mobileJoystickState.strength = 0;
+
+      if (knob) {
+        knob.style.transform = 'translate(-50%, -50%)';
+      }
+    };
+
+    const updateJoystick = (event) => {
+      if (!joystick || !knob) return;
+
+      const rect = joystick.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const maxDistance = rect.width * 0.36;
+
+      let dx = event.clientX - centerX;
+      let dy = event.clientY - centerY;
+      const distance = Math.hypot(dx, dy);
+      const clampedDistance = Math.min(maxDistance, distance);
+      const angle = Math.atan2(dy, dx);
+
+      const knobX = Math.cos(angle) * clampedDistance;
+      const knobY = Math.sin(angle) * clampedDistance;
+
+      if (distance > 0) {
+        mobileJoystickState.x = Math.cos(angle);
+        mobileJoystickState.y = Math.sin(angle);
+      } else {
+        mobileJoystickState.x = 0;
+        mobileJoystickState.y = 0;
+      }
+
+      mobileJoystickState.strength = clamp(clampedDistance / maxDistance, 0, 1);
+      knob.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
+    };
+
+    if (joystick) {
+      joystick.addEventListener('pointerdown', (event) => {
         event.preventDefault();
-        mobileControlsState[control] = true;
-        btn.classList.add('isPressed');
-      };
+        joystick.setPointerCapture(event.pointerId);
+        mobileJoystickState.active = true;
+        mobileJoystickState.pointerId = event.pointerId;
+        updateJoystick(event);
+      });
 
-      const release = (event) => {
+      joystick.addEventListener('pointermove', (event) => {
+        if (!mobileJoystickState.active || mobileJoystickState.pointerId !== event.pointerId) return;
         event.preventDefault();
-        mobileControlsState[control] = false;
-        btn.classList.remove('isPressed');
-      };
+        updateJoystick(event);
+      });
 
-      btn.addEventListener('touchstart', press, { passive: false });
-      btn.addEventListener('touchend', release, { passive: false });
-      btn.addEventListener('touchcancel', release, { passive: false });
-
-      // Keeps the buttons usable on desktop browsers during testing.
-      btn.addEventListener('mousedown', press);
-      btn.addEventListener('mouseup', release);
-      btn.addEventListener('mouseleave', release);
-    });
-
-    const attackBtn = document.getElementById('mobileAttackBtn');
-    if (attackBtn) {
-      const attack = (event) => {
+      joystick.addEventListener('pointerup', (event) => {
+        if (mobileJoystickState.pointerId !== event.pointerId) return;
         event.preventDefault();
-        useStick();
-      };
+        resetJoystick();
+      });
 
-      attackBtn.addEventListener('touchstart', attack, { passive: false });
-      attackBtn.addEventListener('mousedown', attack);
+      joystick.addEventListener('pointercancel', (event) => {
+        if (mobileJoystickState.pointerId !== event.pointerId) return;
+        event.preventDefault();
+        resetJoystick();
+      });
     }
 
-    // Prevent the page from dragging/scrolling while actively playing on touch devices.
+    if (attackButton) {
+      const attack = (event) => {
+        event.preventDefault();
+        attackButton.classList.add('isPressed');
+        useStick();
+        setTimeout(() => attackButton.classList.remove('isPressed'), 120);
+      };
+
+      attackButton.addEventListener('pointerdown', attack);
+    }
+
     document.addEventListener('touchmove', (event) => {
       if (started && isTouchDevice) event.preventDefault();
     }, { passive: false });
   }
 
 
-  bindMobileControlButtons();
+  bindMobileJoystick();
 
   applyPermanentStats();
     updateDom();
@@ -267,11 +313,12 @@
   let obstacles = [];
 
   const keys = {};
-  const mobileControlsState = {
-    up: false,
-    down: false,
-    left: false,
-    right: false,
+  const mobileJoystickState = {
+    active: false,
+    pointerId: null,
+    x: 0,
+    y: 0,
+    strength: 0,
   };
 
   const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
@@ -696,10 +743,15 @@
       return;
     }
 
-    if (keys.ArrowLeft || keys.a || mobileControlsState.left) player.x -= player.speed;
-    if (keys.ArrowRight || keys.d || mobileControlsState.right) player.x += player.speed;
-    if (keys.ArrowUp || keys.w || mobileControlsState.up) player.y -= player.speed;
-    if (keys.ArrowDown || keys.s || mobileControlsState.down) player.y += player.speed;
+    if (keys.ArrowLeft || keys.a) player.x -= player.speed;
+    if (keys.ArrowRight || keys.d) player.x += player.speed;
+    if (keys.ArrowUp || keys.w) player.y -= player.speed;
+    if (keys.ArrowDown || keys.s) player.y += player.speed;
+
+    if (mobileJoystickState.active || mobileJoystickState.strength > 0) {
+      player.x += mobileJoystickState.x * player.speed * mobileJoystickState.strength;
+      player.y += mobileJoystickState.y * player.speed * mobileJoystickState.strength;
+    }
 
     if (player.autoDodgeActive) {
       const px = player.x + player.w / 2;
