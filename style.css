@@ -183,3 +183,152 @@ button.danger {
 #gameCanvas {
   max-height: 78vh;
 }
+
+
+/* Mobile controls are hidden on desktop so PC gameplay stays unchanged. */
+#mobileControls {
+  display: none;
+}
+
+@media (max-width: 900px), (pointer: coarse) {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+
+  body.mobile-playing {
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .app {
+    width: 100%;
+    padding: 10px 0 18px;
+  }
+
+  .hero {
+    padding: 0 12px;
+    margin-bottom: 10px;
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 9vw, 42px);
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .controls {
+    gap: 8px;
+  }
+
+  button {
+    padding: 10px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  .game-shell {
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+  }
+
+  .top-bar,
+  .bottom-bar {
+    padding: 8px 8px;
+    gap: 6px;
+    font-size: 11px;
+    justify-content: center;
+  }
+
+  .top-bar span,
+  .bottom-bar span {
+    padding: 5px 7px;
+  }
+
+  #gameCanvas {
+    width: 100vw;
+    height: auto;
+    max-height: 56vh;
+    touch-action: none;
+  }
+
+  #mobileControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px;
+    padding: 12px 16px 8px;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .mobile-pad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mobile-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mobileBtn {
+    width: 66px;
+    height: 66px;
+    padding: 0;
+    border-radius: 18px;
+    border: 2px solid rgba(255,255,255,0.18);
+    background: rgba(15, 23, 42, 0.9);
+    color: #fff;
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: none;
+  }
+
+  .mobileBtn:active,
+  .mobileBtn.isPressed {
+    transform: scale(0.94);
+    background: rgba(34, 211, 238, 0.25);
+    border-color: rgba(34, 211, 238, 0.7);
+  }
+
+  .mobileAttack {
+    width: 112px;
+    height: 112px;
+    border-radius: 999px;
+    font-size: 17px;
+    background: rgba(239, 68, 68, 0.26);
+    border-color: rgba(248, 113, 113, 0.5);
+  }
+
+  .tips {
+    grid-template-columns: 1fr;
+    padding: 0 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .mobileBtn {
+    width: 58px;
+    height: 58px;
+    font-size: 23px;
+  }
+
+  .mobileAttack {
+    width: 96px;
+    height: 96px;
+    font-size: 15px;
+  }
+
+  #gameCanvas {
+    max-height: 52vh;
+  }
+}

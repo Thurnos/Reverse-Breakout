@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Reverse Breakout — Rogue Lite</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -37,6 +37,21 @@
         <span id="power">Power: —</span>
         <span>Move: WASD / Arrows / Mouse-follow click</span>
         <span>Level 3 weapon: Space / E</span>
+      </div>
+    </section>
+
+    <section id="mobileControls" aria-label="Mobile controls">
+      <div class="mobile-pad">
+        <button class="mobileBtn mobile-up" data-mobile-control="up" aria-label="Move up">▲</button>
+        <div class="mobile-row">
+          <button class="mobileBtn" data-mobile-control="left" aria-label="Move left">◀</button>
+          <button class="mobileBtn" data-mobile-control="down" aria-label="Move down">▼</button>
+          <button class="mobileBtn" data-mobile-control="right" aria-label="Move right">▶</button>
+        </div>
+      </div>
+
+      <div class="mobile-actions">
+        <button class="mobileBtn mobileAttack" id="mobileAttackBtn" aria-label="Use stick weapon">ATTACK</button>
       </div>
     </section>
 

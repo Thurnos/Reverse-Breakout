@@ -24,6 +24,18 @@
   const rand = (min, max) => Math.random() * (max - min) + min;
   const choice = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+  function mobileSpeedFactor() {
+    return isTouchDevice ? 0.86 : 1;
+  }
+
+  function mobileSpawnFactor() {
+    return isTouchDevice ? 1.16 : 1;
+  }
+
+  function mobilePlayerSpeedBonus() {
+    return isTouchDevice ? 0.7 : 0;
+  }
+
   let muted = false;
   let audioCtx = null;
 
@@ -114,7 +126,57 @@
     gold = 0;
     upgrades = {};
     lastRunGold = 0;
-    applyPermanentStats();
+  
+  function bindMobileControlButtons() {
+    const buttons = document.querySelectorAll('[data-mobile-control]');
+
+    buttons.forEach((btn) => {
+      const control = btn.dataset.mobileControl;
+      if (!control || !(control in mobileControlsState)) return;
+
+      const press = (event) => {
+        event.preventDefault();
+        mobileControlsState[control] = true;
+        btn.classList.add('isPressed');
+      };
+
+      const release = (event) => {
+        event.preventDefault();
+        mobileControlsState[control] = false;
+        btn.classList.remove('isPressed');
+      };
+
+      btn.addEventListener('touchstart', press, { passive: false });
+      btn.addEventListener('touchend', release, { passive: false });
+      btn.addEventListener('touchcancel', release, { passive: false });
+
+      // Keeps the buttons usable on desktop browsers during testing.
+      btn.addEventListener('mousedown', press);
+      btn.addEventListener('mouseup', release);
+      btn.addEventListener('mouseleave', release);
+    });
+
+    const attackBtn = document.getElementById('mobileAttackBtn');
+    if (attackBtn) {
+      const attack = (event) => {
+        event.preventDefault();
+        useStick();
+      };
+
+      attackBtn.addEventListener('touchstart', attack, { passive: false });
+      attackBtn.addEventListener('mousedown', attack);
+    }
+
+    // Prevent the page from dragging/scrolling while actively playing on touch devices.
+    document.addEventListener('touchmove', (event) => {
+      if (started && isTouchDevice) event.preventDefault();
+    }, { passive: false });
+  }
+
+
+  bindMobileControlButtons();
+
+  applyPermanentStats();
     updateDom();
   }
 
@@ -166,7 +228,7 @@
   function applyPermanentStats() {
     const compactScale = Math.max(0.72, 1 - upgradeLevel('compact') * 0.04);
     player.maxHp = BASE.maxHp + upgradeLevel('vitality') * 20;
-    player.speed = BASE.speed + upgradeLevel('agility') * 0.45;
+    player.speed = BASE.speed + upgradeLevel('agility') * 0.45 + mobilePlayerSpeedBonus();
     player.baseW = BASE.w * compactScale;
     player.baseH = BASE.h * compactScale;
     player.stickRadius = BASE.stickRadius + upgradeLevel('stick') * 10;
@@ -205,6 +267,14 @@
   let obstacles = [];
 
   const keys = {};
+  const mobileControlsState = {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
+  };
+
+  const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
   const shake = { x: 0, y: 0, intensity: 0 };
 
   class Ball {
@@ -346,7 +416,7 @@
 
   function spawnBall(mode = 'normal') {
     const level = LEVELS[currentLevel] || LEVELS[1];
-    const speed = rand(1.35, 2.55) + Math.min(0.95, elapsed / 34) + level.speedBonus;
+    const speed = (rand(1.35, 2.55) + Math.min(0.95, elapsed / 34) + level.speedBonus) * mobileSpeedFactor();
     let x = 0, y = 0, dx = 0, dy = 0;
 
     if (mode === 'vertical') {
@@ -626,10 +696,10 @@
       return;
     }
 
-    if (keys.ArrowLeft || keys.a) player.x -= player.speed;
-    if (keys.ArrowRight || keys.d) player.x += player.speed;
-    if (keys.ArrowUp || keys.w) player.y -= player.speed;
-    if (keys.ArrowDown || keys.s) player.y += player.speed;
+    if (keys.ArrowLeft || keys.a || mobileControlsState.left) player.x -= player.speed;
+    if (keys.ArrowRight || keys.d || mobileControlsState.right) player.x += player.speed;
+    if (keys.ArrowUp || keys.w || mobileControlsState.up) player.y -= player.speed;
+    if (keys.ArrowDown || keys.s || mobileControlsState.down) player.y += player.speed;
 
     if (player.autoDodgeActive) {
       const px = player.x + player.w / 2;
@@ -662,7 +732,7 @@
     if (spawnTimer >= spawnInterval) {
       spawnTimer = 0;
       const level = LEVELS[currentLevel];
-      spawnInterval = Math.max(level.minSpawnInterval, level.spawnInterval - elapsed * 4.2);
+      spawnInterval = Math.max(level.minSpawnInterval, (level.spawnInterval - elapsed * 4.2) * mobileSpawnFactor());
 
       let count = 1;
       if (currentLevel >= 5 && Math.random() < 0.18) count++;
@@ -894,6 +964,7 @@
     if (!started) return;
 
     started = false;
+    document.body.classList.remove('mobile-playing');
     balls = [];
     powerups = [];
     levelTransition = false;
@@ -1326,6 +1397,7 @@
     shopOpen = false;
     lastRunGold = 0;
     started = true;
+    document.body.classList.add('mobile-playing');
     lastTime = 0;
     runStart = performance.now();
     resetRun();
